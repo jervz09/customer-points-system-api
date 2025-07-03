@@ -17,7 +17,7 @@ import * as authController from './controllers/authController.js';
  * Auth Routes
  * =====================
  */
-router.post('/adminlogin', loginValidator, validateRequest, authController.loginAdmin);
+router.post('/admin/login', loginValidator, validateRequest, authController.loginAdmin);
 router.post('/admin/register', registerAdminValidator, validateRequest, authController.registerAdmin);
 
 router.post('/login', loginValidator, validateRequest, authController.loginCustomer);
