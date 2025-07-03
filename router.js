@@ -3,6 +3,7 @@ import validateRequest from './middlewares/validateRequest.js';
 
 import registerValidator from './validators/registerValidator.js';
 import loginValidator from './validators/loginValidator.js';
+import registerAdminValidator from './validators/registerAdminValidator.js';
 const router = express.Router();
 
 // Middleware
@@ -16,24 +17,11 @@ import * as authController from './controllers/authController.js';
  * Auth Routes
  * =====================
  */
-router.post(
-	'/login',
-	loginValidator,
-	validateRequest,
-	authController.loginCustomer
-);
-router.post(
-	'/register',
-	registerValidator,
-	validateRequest,
-	authController.registerCustomer
-);
+router.post('/adminlogin', loginValidator, validateRequest, authController.loginAdmin);
+router.post('/admin/register', registerAdminValidator, validateRequest, authController.registerAdmin);
 
-router.post(
-	'/register',
-	registerValidator,
-	validateRequest,
-	authController.registerCustomer
+router.post('/login', loginValidator, validateRequest, authController.loginCustomer);
+router.post('/register', registerValidator, validateRequest, authController.registerCustomer
 );
 
 
