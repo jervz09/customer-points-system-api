@@ -16,13 +16,26 @@ import * as authController from './controllers/authController.js';
  * Auth Routes
  * =====================
  */
-router.post('/login', loginValidator, validateRequest, authController.login);
+router.post(
+	'/login',
+	loginValidator,
+	validateRequest,
+	authController.loginCustomer
+);
 router.post(
 	'/register',
 	registerValidator,
 	validateRequest,
 	authController.registerCustomer
 );
+
+router.post(
+	'/register',
+	registerValidator,
+	validateRequest,
+	authController.registerCustomer
+);
+
 
 router.use(auth); // Apply auth middleware to all routes below
 

@@ -51,7 +51,7 @@ export const registerCustomer = async (req, res) => {
 	}
 };
 
-export const login = (req, res) => {
+export const loginCustomer = (req, res) => {
 	const { username, password } = req.body;
 	db.query(
 		'SELECT * FROM customer WHERE username = ?',
