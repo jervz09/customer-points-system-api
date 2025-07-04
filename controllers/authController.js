@@ -68,7 +68,11 @@ export const loginCustomer = (req, res) => {
 					.status(401)
 					.json({ message: 'Invalid username or password' });
 
-			const token = generateToken({ userId: user.id });
+			const token = generateToken({
+				user_id: user.entity_id,
+				username,
+				user_type: 'customer',
+			});
 			res.json({ message: 'Login successful', token });
 		}
 	);
@@ -136,7 +140,11 @@ export const loginAdmin = (req, res) => {
 					.status(401)
 					.json({ message: 'Invalid username or password' });
 
-			const token = generateToken({ userId: admin.id });
+			const token = generateToken({
+				user_id: admin.entity_id,
+				username,
+				user_type: admin.role_id,
+			});
 			res.json({ message: 'Login successful', token });
 		}
 	);

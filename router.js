@@ -21,10 +21,12 @@ router.post('/admin/login', loginValidator, validateRequest, authController.logi
 router.post('/admin/register', registerAdminValidator, validateRequest, authController.registerAdmin);
 
 router.post('/login', loginValidator, validateRequest, authController.loginCustomer);
-router.post('/register', registerValidator, validateRequest, authController.registerCustomer
-);
+router.post('/register', registerValidator, validateRequest, authController.registerCustomer);
 
 
 router.use(auth); // Apply auth middleware to all routes below
 
+//add promo
+//redeem promo
+//add role
 export default router;
