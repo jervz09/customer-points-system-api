@@ -73,7 +73,7 @@ A role-based reward management system for handling customer point tracking, prom
 - Click on any client row to:
   - ✏️ Edit personal info (name, contact, etc.)
   - 🔻 Redeem Points (dropdown of available promos)
-  - 💡 Example: "T-Shirt" costs 500 points
+  - 💡 Example: "Loyalty Promo" costs 500 points
 
 ---
 
