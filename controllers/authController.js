@@ -34,48 +34,54 @@ export const registerCustomer = async (req, res) => {
 
 		const hashed = await hashPassword(password);
 
-		db.query(
-			'INSERT INTO customer (username, password, firstname, middlename, lastname, mobile_no, email) VALUES (?, ?, ?, ?, ?, ?, ?)',
-			[username, hashed, firstname, middlename, lastname, mobile_no, email],
-			err => {
-				if (err)
-					return res.status(500).json({ message: 'Insert failed', error: err });
-				res.status(201).json({ message: 'User registered successfully' });
-			}
-		);
+		await db
+			.insertInto('customer')
+			.values({
+				username,
+				password: hashed,
+				firstname,
+				middlename,
+				lastname,
+				mobile_no,
+				email,
+			})
+			.execute();
+
+		res.status(201).json({ message: 'User registered successfully' });
 	} catch (err) {
 		res.status(500).json({ message: 'Unexpected error', error: err.message });
 	}
 };
 
-export const loginCustomer = (req, res) => {
+export const loginCustomer = async (req, res) => {
 	const { username, password } = req.body;
+	try {
+		const user = await db
+			.selectFrom('customer')
+			.selectAll()
+			.where('username', '=', username)
+			.executeTakeFirst();
 
-	db.query(
-		'SELECT * FROM customer WHERE username = ?',
-		[username],
-		async (err, results) => {
-			if (err) return res.status(500).json({ message: 'DB error', error: err });
-			if (results.length === 0)
-				return res
-					.status(401)
-					.json({ message: 'Invalid username or password' });
-
-			const user = results[0];
-			const match = await comparePassword(password, user.password);
-			if (!match)
-				return res
-					.status(401)
-					.json({ message: 'Invalid username or password' });
-
-			const token = generateToken({
-				user_id: user.entity_id,
-				username,
-				user_type: 'customer',
-			});
-			res.json({ message: 'Login successful', token });
+		if (!user) {
+			return res.status(401).json({ message: 'Invalid username or password' });
 		}
-	);
+
+		const match = await comparePassword(password, user.password);
+		if (!match) {
+			return res.status(401).json({ message: 'Invalid username or password' });
+		}
+
+		const token = generateToken({
+			user_id: user.entity_id,
+			username: user.username,
+			user_type: 'customer',
+		});
+
+		res.json({ message: 'Login successful', token });
+	} catch (err) {
+		console.error('Login failed:', err);
+		res.status(500).json({ message: 'DB error', error: err.message || err });
+	}
 };
 
 // ADMIN
@@ -106,46 +112,53 @@ export const registerAdmin = async (req, res) => {
 
 		const hashed = await hashPassword(password);
 
-		db.query(
-			'INSERT INTO admins (username, password, firstname, middlename, lastname, role_id, email) VALUES (?, ?, ?, ?, ?, ?, ?)',
-			[username, hashed, firstname, middlename, lastname, role_id, email],
-			err => {
-				if (err)
-					return res.status(500).json({ message: 'Insert failed', error: err });
-				res.status(201).json({ message: 'Admin registered successfully' });
-			}
-		);
+		await db
+			.insertInto('admins')
+			.values({
+				username,
+				password: hashed,
+				firstname,
+				middlename,
+				lastname,
+				role_id,
+				email,
+			})
+			.execute();
+
+		res.status(201).json({ message: 'User registered successfully' });
 	} catch (err) {
 		res.status(500).json({ message: 'Unexpected error', error: err.message });
 	}
 };
 
-export const loginAdmin = (req, res) => {
+export const loginAdmin = async (req, res) => {
 	const { username, password } = req.body;
 
-	db.query(
-		'SELECT * FROM admins WHERE username = ?',
-		[username],
-		async (err, results) => {
-			if (err) return res.status(500).json({ message: 'DB error', error: err });
-			if (results.length === 0)
-				return res
-					.status(401)
-					.json({ message: 'Invalid username or password' });
+	try {
+		const admin = await db
+			.selectFrom('admins')
+			.selectAll()
+			.where('username', '=', username)
+			.executeTakeFirst();
 
-			const admin = results[0];
-			const match = await comparePassword(password, admin.password);
-			if (!match)
-				return res
-					.status(401)
-					.json({ message: 'Invalid username or password' });
-
-			const token = generateToken({
-				user_id: admin.entity_id,
-				username,
-				user_type: admin.role_id,
-			});
-			res.json({ message: 'Login successful', token });
+		if (!admin) {
+			return res.status(401).json({ message: 'Invalid username or password' });
 		}
-	);
+
+		const match = await comparePassword(password, admin.password);
+		if (!match) {
+			return res.status(401).json({ message: 'Invalid username or password' });
+		}
+
+		const token = generateToken({
+			user_id: admin.entity_id,
+			username: admin.username,
+			user_type: admin.role_id,
+		});
+
+		res.json({ message: 'Admin Login successful', token });
+	} catch (err) {
+		console.error('Login failed:', err);
+		res.status(500).json({ message: 'DB error', error: err.message || err });
+	}
 };
