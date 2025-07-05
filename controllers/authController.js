@@ -5,6 +5,7 @@ import {
 	generateToken,
 } from '../utils/authHelper.js';
 import db from '../config/db.js';
+import { nanoid } from 'nanoid';
 
 // CUSTOMER
 export const registerCustomer = async (req, res) => {
@@ -26,16 +27,17 @@ export const registerCustomer = async (req, res) => {
 		);
 
 		if (existing.some(user => user.username === username)) {
-			return res.status(400).json({ message: 'Username already exists' });
+			return res.error('Username already exists', 400);
 		}
 		if (existing.some(user => user.email === email)) {
-			return res.status(400).json({ message: 'Email already exists' });
+			return res.error('Email already exists', 400);
 		}
 
 		const hashed = await hashPassword(password);
+		const qr_token = `CUS-${nanoid(10).toUpperCase()}`;
 
 		await db
-			.insertInto('customer')
+			.insertInto('customers')
 			.values({
 				username,
 				password: hashed,
@@ -44,12 +46,13 @@ export const registerCustomer = async (req, res) => {
 				lastname,
 				mobile_no,
 				email,
+				qr_token,
 			})
 			.execute();
 
-		res.status(201).json({ message: 'User registered successfully' });
+		res.success({ qr_token }, 'User registered successfully');
 	} catch (err) {
-		res.status(500).json({ message: 'Unexpected error', error: err.message });
+		res.error('Unexpected error', 500, err.message);
 	}
 };
 
@@ -57,7 +60,7 @@ export const loginCustomer = async (req, res) => {
 	const { username, password } = req.body;
 	try {
 		const user = await db
-			.selectFrom('customer')
+			.selectFrom('customers')
 			.selectAll()
 			.where('username', '=', username)
 			.executeTakeFirst();
@@ -111,6 +114,7 @@ export const registerAdmin = async (req, res) => {
 		}
 
 		const hashed = await hashPassword(password);
+		const qr_token = `RAND-${nanoid(9).toUpperCase()}`;
 
 		await db
 			.insertInto('admins')
@@ -122,6 +126,7 @@ export const registerAdmin = async (req, res) => {
 				lastname,
 				role_id,
 				email,
+				qr_token,
 			})
 			.execute();
 
