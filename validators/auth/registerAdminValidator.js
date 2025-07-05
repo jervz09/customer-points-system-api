@@ -1,6 +1,6 @@
 import { body } from 'express-validator';
 
-const registerValidator = [
+const registerAdminValidator = [
 	body('email').isEmail().withMessage('A valid email is required'),
 
 	body('password')
@@ -12,4 +12,4 @@ const registerValidator = [
 	body('lastname').notEmpty().withMessage('Last Name is required'),
 	body('role_id').notEmpty().withMessage('Role is required'),
 ];
-export default registerValidator;
+export default registerAdminValidator;

@@ -1,32 +1,36 @@
 import express from 'express';
 import validateRequest from './middlewares/validateRequest.js';
-
-import registerValidator from './validators/registerValidator.js';
-import loginValidator from './validators/loginValidator.js';
-import registerAdminValidator from './validators/registerAdminValidator.js';
-const router = express.Router();
-
-// Middleware
 import auth from './middlewares/auth.js';
 
 // Controllers
 import * as authController from './controllers/authController.js';
+import * as promoController from './controllers/promoController.js';
+// Validators
+import validators from './validators/index.js';
+
+const router = express.Router();
 
 /**
  * =====================
- * Auth Routes
+ * Public Auth Routes
  * =====================
  */
-router.post('/admin/login', loginValidator, validateRequest, authController.loginAdmin);
-router.post('/admin/register', registerAdminValidator, validateRequest, authController.registerAdmin);
+router.post('/login', validators.auth.loginValidator, validateRequest, authController.loginCustomer);
+router.post('/register', validators.auth.registerValidator, validateRequest, authController.registerCustomer);
 
-router.post('/login', loginValidator, validateRequest, authController.loginCustomer);
-router.post('/register', registerValidator, validateRequest, authController.registerCustomer);
+router.post('/admin/login', validators.auth.loginValidator, validateRequest, authController.loginAdmin);
+router.post('/admin/register', validators.auth.registerAdminValidator, validateRequest, authController.registerAdmin);
 
+/**
+ * =====================
+ * Protected Routes
+ * =====================
+ */
+router.use(auth);
 
-router.use(auth); // Apply auth middleware to all routes below
+router.post('/promo', validators.promo.addPromoValidator, validateRequest, promoController.createPromo);
+router.put('/promo/:id', validators.promo.editPromoValidator, validateRequest, promoController.updatePromo);
 
-//add promo
-//redeem promo
-//add role
+// TODO: Add redeem promo, role management, etc.
+
 export default router;
