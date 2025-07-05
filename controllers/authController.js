@@ -150,13 +150,19 @@ export const loginAdmin = async (req, res) => {
 			return res.status(401).json({ message: 'Invalid username or password' });
 		}
 
+		const role = await db
+			.selectFrom('roles')
+			.selectAll()
+			.where('entity_id', '=', admin.role_id)
+			.where('is_deleted', '=', 0)
+			.executeTakeFirst();
+
 		const token = generateToken({
 			user_id: admin.entity_id,
 			username: admin.username,
-			user_type: admin.role_id,
+			role: role.role,
 		});
-
-		res.json({ message: 'Admin Login successful', token });
+		res.success({ token }, 'Admin Login successful');
 	} catch (err) {
 		console.error('Login failed:', err);
 		res.status(500).json({ message: 'DB error', error: err.message || err });

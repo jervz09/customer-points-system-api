@@ -1,6 +1,7 @@
 import express from 'express';
 import validateRequest from './middlewares/validateRequest.js';
 import auth from './middlewares/auth.js';
+import requireRole from './middlewares/hasRole.js';
 
 // Controllers
 import * as authController from './controllers/authController.js';
@@ -28,8 +29,18 @@ router.post('/admin/register', validators.auth.registerAdminValidator, validateR
  */
 router.use(auth);
 
-router.post('/promo', validators.promo.addPromoValidator, validateRequest, promoController.createPromo);
-router.put('/promo/:id', validators.promo.editPromoValidator, validateRequest, promoController.updatePromo);
+/**
+ * =====================
+ * Promo Routes
+ * =====================
+ */
+router.get('/promos', promoController.getAllPromo);
+router.get('/promo/:id', promoController.getOnePromo);
+router.post('/promo', requireRole(['admin','operator']), validators.promo.addPromoValidator, validateRequest, promoController.createPromo);
+router.put('/promo/:id', requireRole(['admin','operator']), validators.promo.editPromoValidator, validateRequest, promoController.updatePromo);
+router.patch('/promo/:id/activate', requireRole(['admin','operator']), promoController.activatePromo);
+router.patch('/promo/:id/deactivate', requireRole(['admin','operator']), promoController.deactivatePromo);
+router.patch('/promo/:id/delete', requireRole(['admin','operator']), promoController.softDeletePromo);
 
 // TODO: Add redeem promo, role management, etc.
 
