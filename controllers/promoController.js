@@ -1,5 +1,5 @@
 import db from '../config/db.js';
-import { checkIfExists } from '../utils/authHelper.js';
+import { checkIfExists } from '../utils/queryHelper.js';
 import { toSnakeCase } from '../utils/stringHelper.js';
 import { buildPaginatedQuery } from '../utils/queryHelper.js';
 
@@ -37,7 +37,7 @@ export const updatePromo = async (req, res) => {
 	const { promo_name, points, used } = req.body;
 
 	try {
-		const result = await db
+		await db
 			.updateTable('promos')
 			.set({ promo_name, points, used, slug: toSnakeCase(promo_name) })
 			.where('entity_id', '=', id)

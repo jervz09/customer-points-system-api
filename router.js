@@ -6,21 +6,25 @@ import requireRole from './middlewares/hasRole.js';
 // Controllers
 import * as authController from './controllers/authController.js';
 import * as promoController from './controllers/promoController.js';
+import * as scanController from './controllers/scanController.js';
+
 // Validators
 import validators from './validators/index.js';
 
 const router = express.Router();
 
+const high_level = ['admin','operator'];
 /**
  * =====================
  * Public Auth Routes
  * =====================
  */
-router.post('/login', validators.auth.loginValidator, validateRequest, authController.loginCustomer);
-router.post('/register', validators.auth.registerValidator, validateRequest, authController.registerCustomer);
+router.post('/login',                               validators.auth.loginValidator, validateRequest,        authController.loginCustomer);
+router.post('/register',                            validators.auth.registerValidator, validateRequest,     authController.registerCustomer);
 
-router.post('/admin/login', validators.auth.loginValidator, validateRequest, authController.loginAdmin);
-router.post('/admin/register', validators.auth.registerAdminValidator, validateRequest, authController.registerAdmin);
+router.post('/admin/login',                         validators.auth.loginValidator, validateRequest,        authController.loginAdmin);
+router.post('/admin/register',                      validators.auth.registerAdminValidator, validateRequest,authController.registerAdmin);
+
 
 /**
  * =====================
@@ -34,13 +38,22 @@ router.use(auth);
  * Promo Routes
  * =====================
  */
-router.get('/promos', promoController.getAllPromo);
-router.get('/promo/:id', promoController.getOnePromo);
-router.post('/promo', requireRole(['admin','operator']), validators.promo.addPromoValidator, validateRequest, promoController.createPromo);
-router.put('/promo/:id', requireRole(['admin','operator']), validators.promo.editPromoValidator, validateRequest, promoController.updatePromo);
-router.patch('/promo/:id/activate', requireRole(['admin','operator']), promoController.activatePromo);
-router.patch('/promo/:id/deactivate', requireRole(['admin','operator']), promoController.deactivatePromo);
-router.patch('/promo/:id/delete', requireRole(['admin','operator']), promoController.softDeletePromo);
+router.get('/promos',                                                                                       promoController.getAllPromo);
+router.get('/promo/:id',                                                                                    promoController.getOnePromo);
+router.post('/promo',       requireRole(high_level), validators.promo.addPromoValidator, validateRequest,   promoController.createPromo);
+router.put('/promo/:id',    requireRole(high_level), validators.promo.editPromoValidator, validateRequest,  promoController.updatePromo);
+router.patch('/promo/:id/activate',     requireRole(high_level),                                            promoController.activatePromo);
+router.patch('/promo/:id/deactivate',   requireRole(high_level),                                            promoController.deactivatePromo);
+router.patch('/promo/:id/delete',       requireRole(high_level),                                            promoController.softDeletePromo);
+
+
+/**
+ * =====================
+ * Activity Routes
+ * =====================
+ */
+
+router.post('/scan',                                validators.promo.addPromoValidator, validateRequest,    scanController.handleScan);
 
 // TODO: Add redeem promo, role management, etc.
 

@@ -1,9 +1,9 @@
 import {
-	checkIfExists,
 	hashPassword,
 	comparePassword,
 	generateToken,
 } from '../utils/authHelper.js';
+import { checkIfExists } from '../utils/queryHelper.js';
 import db from '../config/db.js';
 import { nanoid } from 'nanoid';
 
