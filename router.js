@@ -49,11 +49,12 @@ router.patch('/promo/:id/delete',       requireRole(high_level),                
 
 /**
  * =====================
- * Activity Routes
+ * Scan Routes
  * =====================
  */
 
-router.post('/scan',                                validators.promo.addPromoValidator, validateRequest,    scanController.handleScan);
+router.post('/scan/auto',                              validators.scan.autoScanValidator, validateRequest,  scanController.handleScanAuto);
+router.post('/scan/manual',                            validators.scan.manualScanValidator, validateRequest,scanController.handleScanManual);
 
 // TODO: Add redeem promo, role management, etc.
 
