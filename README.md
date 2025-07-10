@@ -44,9 +44,11 @@ cp .env.example .env
 # Start the server
 npm run dev
 ```
+---
 
-📁 Directory Structure
+## 📁 Project Structure
 
+```
 .
 ├── config
 │   └── db.js
@@ -77,15 +79,22 @@ npm run dev
     ├── index.js
     ├── promo
     └── scan
+```
 
-🧾 Roles
+---
+
+## 🧾 Roles
+
 | Role         | Access Description                          |
 | ------------ | ------------------------------------------- |
 | **Admin**    | Full system control (users, promos, points) |
 | **Operator** | Manage clients and promos                   |
 | **Client**   | View own points and logs                    |
 
-🧰 Environment Variables
+
+---
+
+## 🧰 Environment Variables
 
 Create a .env file:
 ```.ini
@@ -98,6 +107,8 @@ DB_NAME=customer_points_system
 JWT_SECRET=your_jwt_secret
 ```
 
-🧪 Testing
+---
+
+## 🧪 Testing
 
 Use the included Postman collection to test all routes. Tokens are automatically saved and reused.
